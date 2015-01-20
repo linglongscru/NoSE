@@ -10,15 +10,7 @@ require 'rspec/collection_matchers'
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 unless RUBY_PLATFORM == 'java'
-  require 'codeclimate-test-reporter'
   require 'simplecov'
-  SimpleCov.add_filter '/spec/'
-  SimpleCov.start do
-    formatter SimpleCov::Formatter::MultiFormatter[
-      SimpleCov::Formatter::HTMLFormatter,
-      CodeClimate::TestReporter::Formatter
-    ]
-  end
 end
 
 RSpec.configure do |config|
