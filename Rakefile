@@ -9,7 +9,9 @@ class OpenStruct
   end
 end
 
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = "--tag ~gurobi"
+end
 YARD::Rake::YardocTask.new(:doc)
 
 task :console do
