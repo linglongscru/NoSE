@@ -5,13 +5,11 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
+require 'simplecov'
+
 require 'rspec/collection_matchers'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
-
-unless RUBY_PLATFORM == 'java'
-  require 'simplecov'
-end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
