@@ -23,7 +23,7 @@ end
 
 group :test do
   gem 'aruba', '~> 0.6.0', require: false
-  gem 'codeclimate-test-reporter', require: false
+  gem 'codecov', require: false
   gem 'fakefs', require: 'fakefs/safe' # used for testing
   gem 'rspec'
   gem 'rspec-collection_matchers'

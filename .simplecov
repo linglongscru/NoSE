@@ -1,13 +1,11 @@
-require 'codeclimate-test-reporter'
+require 'codecov'
 
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
-  CodeClimate::TestReporter::Formatter
+  SimpleCov::Formatter::CodeCov
 ]
 
 SimpleCov.start do
   add_filter '/spec/'
   add_filter '/vendor/'
-
-  skip_token CodeClimate::TestReporter.configuration.skip_token
 end
