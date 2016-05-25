@@ -129,5 +129,25 @@ module NoSE
         end.to raise_error InvalidIndexException
       end
     end
+
+    context 'when reducing to an ID path' do
+      it 'moves non-ID fields to extra data' do
+        index = Index.new [user['City']], [user['UserId']], [],
+                          [user['UserId']]
+        id_path = index.to_id_path
+
+        expect(id_path.hash_fields).to match_array [user['UserId']]
+        expect(id_path.order_fields).to be_empty
+        expect(id_path.extra).to match_array [user['City']]
+      end
+
+      it 'does not change indexes which are already ID paths' do
+        index = Index.new [user['UserId']], [tweet['TweetId']], [tweet['Body']],
+                          [user['UserId'], user['Tweets']]
+        id_path = index.to_id_path
+
+        expect(id_path).to eq(index)
+      end
+    end
   end
 end
