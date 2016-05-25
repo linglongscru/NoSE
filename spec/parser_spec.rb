@@ -343,5 +343,28 @@ module NoSE
       reverse_path = KeyPath.new [tweet.id_fields.first, tweet['User']]
       expect(key_path.reverse).to eq(reverse_path)
     end
+
+    context 'when producing the path for a field' do
+      it 'names fields on the first entity' do
+        key_path = KeyPath.new [user.id_fields.first]
+        expect(key_path.path_for_field(user['City'])).to match_array ['City']
+      end
+
+      it 'names intermediate foreign keys' do
+        key_path = KeyPath.new [user.id_fields.first,
+                                user['Tweets'],
+                                tweet['Link']]
+        expect(key_path.path_for_field(link['URL'])).to match_array \
+          %w(Tweets Link URL)
+      end
+
+      it 'can produce partial paths' do
+        key_path = KeyPath.new [user.id_fields.first,
+                                user['Tweets'],
+                                tweet['Link']]
+        expect(key_path.path_for_field(tweet['Body'])).to match_array \
+          %w(Tweets Body)
+      end
+    end
   end
 end
