@@ -11,11 +11,18 @@ module NoSE
   module Search
     # Searches for the optimal indices for a given workload
     class Search
-      def initialize(workload, cost_model, objective = Objective::COST)
+      def initialize(workload, cost_model, objective = Objective::COST,
+                     by_id_path = false)
         @logger = Logging.logger['nose::search']
         @workload = workload
         @cost_model = cost_model
         @objective = objective
+        @by_id_path = by_id_path
+
+        # For now we only support optimization based on cost when grouping by
+        # ID paths, but support for other objectives is still feasible
+        fail 'Only cost-based optimization allowed when grouping by ID paths' \
+          if @by_id_path && objective != Objective::COST
       end
 
       # Search for optimal indices using an ILP which searches for
@@ -35,7 +42,8 @@ module NoSE
           max_space: max_space,
           costs: costs,
           update_costs: update_costs,
-          cost_model: @cost_model
+          cost_model: @cost_model,
+          by_id_path: @by_id_path
         }
         search_result query_weights, indexes, solver_params, trees,
                       update_plans
@@ -45,6 +53,7 @@ module NoSE
 
       # Combine the weights of queries and statements
       def combine_query_weights(indexes)
+        indexes = indexes.map(&:to_id_path).uniq if @by_id_path
         query_weights = Hash[@workload.support_queries(indexes).map do |query|
           [query, @workload.statement_weights[query.statement]]
         end]
@@ -127,7 +136,8 @@ module NoSE
 
       # Produce the cost of updates in the workload
       def update_costs(trees, indexes)
-        planner = Plans::UpdatePlanner.new @workload.model, trees, @cost_model
+        planner = Plans::UpdatePlanner.new @workload.model, trees,
+                                           @cost_model, @by_id_path
         update_costs = Hash.new { |h, k| h[k] = {} }
         update_plans = Hash.new { |h, k| h[k] = [] }
         @workload.statements.each do |statement|
@@ -143,6 +153,7 @@ module NoSE
       # Populate the cost of all necessary plans for the given satement
       def populate_update_costs(planner, statement, indexes,
                                 update_costs, update_plans)
+        indexes = indexes.map(&:to_id_path).uniq if @by_id_path
         planner.find_plans_for_update(statement, indexes).each do |plan|
           weight = @workload.statement_weights[statement]
           update_costs[statement][plan.index] = plan.update_cost * weight

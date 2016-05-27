@@ -104,11 +104,12 @@ module NoSE
 
       # Collect all advisor results for schema design problem
       def search_result(workload, cost_model, max_space = Float::INFINITY,
-                        objective = Search::Objective::COST)
+                        objective = Search::Objective::COST,
+                        by_id_path = false)
         enumerated_indexes = IndexEnumerator.new(workload) \
-                             .indexes_for_workload.to_a
-        Search::Search.new(workload, cost_model, objective) \
-          .search_overlap enumerated_indexes, max_space
+                             .indexes_for_workload([], by_id_path)
+        Search::Search.new(workload, cost_model, objective, by_id_path) \
+          .search_overlap enumerated_indexes.to_a, max_space
       end
 
       # Load results of a previous search operation

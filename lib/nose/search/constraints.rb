@@ -35,6 +35,9 @@ module NoSE
       def self.apply(problem)
         return unless problem.data[:max_space].finite?
 
+        fail 'Space constraint not supported when grouping by ID path' \
+          if problem.data[:by_id_path]
+
         space = problem.total_size
         constr = MIPPeR::Constraint.new space, :<=,
                                         problem.data[:max_space] * 1.0,
@@ -54,7 +57,11 @@ module NoSE
           if query.is_a? SupportQuery
             # Find the index associated with the support query and make
             # the requirement of a plan conditional on this index
-            index_var = problem.index_vars[query.index]
+            if problem.data[:by_id_path]
+              index_var = problem.index_vars[query.index.to_id_path]
+            else
+              index_var = problem.index_vars[query.index]
+            end
             constr = MIPPeR::Constraint.new constraint + index_var * -1.0,
                                             :==, 0, name
           else

@@ -4,12 +4,13 @@ module NoSE
     attr_reader :hash_fields, :order_fields, :extra, :all_fields, :path,
                 :entries, :entry_size, :size, :hash_count, :per_hash_count
 
-    def initialize(hash_fields, order_fields, extra, path, saved_key = nil)
+    def initialize(hash_fields, order_fields, extra, path, saved_key = nil, id_path = nil)
       @hash_fields = hash_fields.to_set
       @order_fields = order_fields - hash_fields.to_a
       @extra = extra.to_set - @hash_fields - @order_fields.to_set
       @all_fields = @hash_fields + order_fields.to_set + @extra
       @path = path.is_a?(KeyPath) ? path : KeyPath.new(path)
+      @id_path = id_path
 
       validate_index
       build_hash saved_key
@@ -43,7 +44,8 @@ module NoSE
       order_fields = all_ids[1..-1]
       extra = @all_fields - hash_fields - order_fields
 
-      Index.new hash_fields, order_fields, extra, @path
+       i = Index.new hash_fields, order_fields, extra, @path, nil, key
+       i
     end
 
     # :nocov:
@@ -52,6 +54,7 @@ module NoSE
         '[' + field_group.map(&:inspect).join(', ') + ']'
       end
 
+      (@id_path ? "ID #{@id_path}: " : '') +
       "[magenta]#{key}[/] #{fields[0]} #{fields[1]} → #{fields[2]}" \
         " [yellow]$#{size}[/]" \
         " [magenta]#{@path.map(&:name).join(', ')}[/]"
