@@ -3,6 +3,8 @@ cache: bundler
 sudo: required
 dist: trusty
 before_install:
+  - lsb_release -a
+  - apt-cache search mysql-server
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - curl -L https://packagecloud.io/michaelmior/coinor/gpgkey | sudo apt-key add -
   - echo "deb https://packagecloud.io/michaelmior/coinor/ubuntu/ precise main" | sudo tee -a /etc/apt/sources.list
