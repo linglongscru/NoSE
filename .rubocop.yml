@@ -27,5 +27,5 @@ Style/SingleLineBlockParams:
 Style/SignalException:
   EnforcedStyle: semantic
   
-SingleSpaceBeforeFirstArg:
+Style/SpaceBeforeFirstArg:
   Enabled: false
