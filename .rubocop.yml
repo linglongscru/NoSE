@@ -6,3 +6,5 @@ Style/CollectionMethods:
     Enabled: true
 Style/InlineComment:
     Enabled: true
+Style/EndOfLine:
+    Enabled: true
