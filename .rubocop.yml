@@ -10,3 +10,7 @@ Style/EndOfLine:
     Enabled: true
 Style/Encoding:
     Enabled: true
+Style/FlipFlop:
+    Enabled: true
+Style/EvenOdd:
+    Enabled: true
