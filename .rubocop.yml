@@ -1,0 +1,4 @@
+Style/GlobalVars:
+    Enabled: false
+Style/SingleSpaceBeforeFirstArg:
+    Enabled: true
